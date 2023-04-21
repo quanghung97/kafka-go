@@ -9,7 +9,7 @@ import (
 
 // global config
 var k = config.Kafka{
-	KafkaUrl: "localhost:9092,localhost:9093,localhost:9094",
+	KafkaUrl: "localhost:9092",
 }
 
 func main() {
@@ -18,6 +18,6 @@ func main() {
 	fmt.Println("start producing ... !!")
 	for i := 0; ; i++ {
 		key := fmt.Sprintf("Key-%d", i)
-		k.WriterSendMessage("topic1", key, fmt.Sprint(uuid.New()))
+		k.WriterSendMessage("services10", key, fmt.Sprint(uuid.New()))
 	}
 }

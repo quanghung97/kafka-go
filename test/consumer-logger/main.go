@@ -8,7 +8,7 @@ import (
 
 // global config
 var k = config.Kafka{
-	KafkaUrl: "localhost:9092,localhost:9093,localhost:9094",
+	KafkaUrl: "localhost:9092",
 }
 
 func main() {
@@ -16,10 +16,15 @@ func main() {
 
 	fmt.Println("start consuming ... !!")
 	for {
-		m, err := k.ReaderReceiveMessage("topic1", "group-logger")
+		_, err := k.ReaderReceiveMessage("services10", "group-logger")
 		if err != nil {
 			fmt.Println(err)
+			break
 		}
-		fmt.Printf("message at topic:%v partition:%v offset:%v	%s = %s\n", m.Topic, m.Partition, m.Offset, string(m.Key), string(m.Value))
+		// fmt.Printf("message at topic:%v partition:%v offset:%v	%s = %s\n", m.Topic, m.Partition, m.Offset, string(m.Key), string(m.Value))
+	}
+
+	if err := k.ConsumerReader.Close(); err != nil {
+		fmt.Println("failed to close reader:", err)
 	}
 }
