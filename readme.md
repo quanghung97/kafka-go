@@ -45,11 +45,17 @@ import (
 )
 
 func main() {
+    // init config
 	k := config.Kafka{
 		KafkaUrl: "localhost:9092",
 	}
+
+    // init reader
 	k.InitKafkaReader("topic1", "group-logger")
+
+    // defer handler reader errors
 	defer k.ConsumerReader.Close()
+    
 	fmt.Println("start consuming ... !!")
 	for {
 		m, err := k.ReaderReceiveMessage()
