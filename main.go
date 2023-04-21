@@ -22,7 +22,7 @@ func strToArr(url string) []string {
 }
 
 // writer
-func (k *Kafka) InitKafkaWriter(topic string) {
+func initKafkaWriter(k *Kafka, topic string) {
 	addresses := strToArr(k.KafkaUrl)
 	k.ProducerWriter = &kafka.Writer{
 		Addr:     pkg.MakeNetAddr("tcp", addresses),
@@ -31,7 +31,15 @@ func (k *Kafka) InitKafkaWriter(topic string) {
 	}
 }
 
-func (k *Kafka) WriterSendMessage(key string, value string) error {
+func (k *Kafka) WriterSendMessage(topic string, key string, value string) error {
+	if k.ProducerWriter == nil {
+		initKafkaWriter(k, topic)
+	} else {
+		if k.ProducerWriter.Topic != topic {
+			initKafkaWriter(k, topic)
+		}
+	}
+
 	msg := kafka.Message{
 		Key:   []byte(key),
 		Value: []byte(value),
@@ -47,7 +55,7 @@ func (k *Kafka) WriterSendMessage(key string, value string) error {
 }
 
 // reader init
-func (k *Kafka) InitKafkaReader(topic string, groupID string) {
+func initKafkaReader(k *Kafka, topic string, groupID string) {
 	brokers := strToArr(k.KafkaUrl)
 	k.ConsumerReader = kafka.NewReader(kafka.ReaderConfig{
 		Brokers:  brokers,
@@ -59,7 +67,15 @@ func (k *Kafka) InitKafkaReader(topic string, groupID string) {
 	})
 }
 
-func (k *Kafka) ReaderReceiveMessage() (kafka.Message, error) {
+func (k *Kafka) ReaderReceiveMessage(topic string, groupID string) (kafka.Message, error) {
+	if k.ConsumerReader == nil {
+		initKafkaReader(k, topic, groupID)
+	} else {
+		if k.ConsumerReader.Config().GroupID != groupID || k.ConsumerReader.Config().Topic != topic {
+			initKafkaReader(k, topic, groupID)
+		}
+	}
+
 	m, err := k.ConsumerReader.ReadMessage(context.Background())
 	if err != nil {
 		log.Fatalln(err)

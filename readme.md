@@ -12,21 +12,18 @@ import (
 	config "github.com/quanghung97/kafka-go"
 )
 
-func main() {
-    // init config
-	k := config.Kafka{
-		KafkaUrl: "localhost:9092,localhost:9093,localhost:9094",
-	}
-    // init writer
-	k.InitKafkaWriter("topic1")
+// global config
+var k = config.Kafka{
+	KafkaUrl: "localhost:9092,localhost:9093,localhost:9094",
+}
 
-    // defer handler writer errors
+func main() {
 	defer k.ProducerWriter.Close()
 
 	fmt.Println("start producing ... !!")
 	for i := 0; ; i++ {
 		key := fmt.Sprintf("Key-%d", i)
-		k.WriterSendMessage(key, fmt.Sprint(uuid.New()))
+		k.WriterSendMessage("topic1", key, fmt.Sprint(uuid.New()))
 	}
 }
 ```
@@ -44,21 +41,17 @@ import (
 	config "github.com/quanghung97/kafka-go"
 )
 
+// global config
+var k = config.Kafka{
+	KafkaUrl: "localhost:9092,localhost:9093,localhost:9094",
+}
+
 func main() {
-    // init config
-	k := config.Kafka{
-		KafkaUrl: "localhost:9092",
-	}
-
-    // init reader
-	k.InitKafkaReader("topic1", "group-logger")
-
-    // defer handler reader errors
 	defer k.ConsumerReader.Close()
-    
+
 	fmt.Println("start consuming ... !!")
 	for {
-		m, err := k.ReaderReceiveMessage()
+		m, err := k.ReaderReceiveMessage("topic1", "group-logger")
 		if err != nil {
 			fmt.Println(err)
 		}
