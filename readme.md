@@ -13,18 +13,39 @@ import (
 )
 
 // global config
-var k = config.Kafka{
-	KafkaUrl: "localhost:9092",
+var configKafka = config.Kafka{
+	KafkaUrl:          "localhost:9092",
+	NumPartitions:     12,
+	ReplicationFactor: 1,
+}
+
+func testLog(msg string, a ...interface{}) {
+	fmt.Printf(msg, a...)
+	fmt.Println()
 }
 
 func main() {
-	defer k.ProducerWriter.Close()
+	defer configKafka.ProducerWriter.Close()
+	// fmt.Println(constants.PACKAGE_KAFKA_WRITER_SEND_MESSAGE + "start producing ... !!")
+	// for i := 0; ; i++ {
+	// 	key := fmt.Sprintf("Key-%d", i)
 
-	fmt.Println("start producing ... !!")
-	for i := 0; ; i++ {
-		key := fmt.Sprintf("Key-%d", i)
-		k.WriterSendMessage("services10", key, fmt.Sprint(uuid.New()))
-	}
+	// 	fmt.Printf("created msg %d \n", i)
+	// }
+	configKafka.WriterSendMessage("topic-have-23", "123213", fmt.Sprint(uuid.New()), testLog)
+	configKafka.WriterSendMessage("topic-have-23", "123214", fmt.Sprint(uuid.New()), testLog)
+	configKafka.WriterSendMessage("topic-have-23", "123215", fmt.Sprint(uuid.New()), testLog)
+	configKafka.WriterSendMessage("topic-have-23", "123216", fmt.Sprint(uuid.New()), testLog)
+	configKafka.WriterSendMessage("topic-have-23", "123217", fmt.Sprint(uuid.New()), testLog)
+	configKafka.WriterSendMessage("topic-have-23", "123218", fmt.Sprint(uuid.New()), testLog)
+	configKafka.WriterSendMessage("topic-have-23", "123219", fmt.Sprint(uuid.New()), testLog)
+	configKafka.WriterSendMessage("topic-have-23", "123221", fmt.Sprint(uuid.New()), testLog)
+	configKafka.WriterSendMessage("topic-have-23", "123222", fmt.Sprint(uuid.New()), testLog)
+	configKafka.WriterSendMessage("topic-have-23", "123223", fmt.Sprint(uuid.New()), testLog)
+	configKafka.WriterSendMessage("topic-have-23", "123224", fmt.Sprint(uuid.New()), testLog)
+	configKafka.WriterSendMessage("topic-have-23", "123225", fmt.Sprint(uuid.New()), testLog)
+	configKafka.WriterSendMessage("topic-have-23", "123226", fmt.Sprint(uuid.New()), testLog)
+	fmt.Println("end .......")
 }
 ```
 
@@ -37,31 +58,30 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	config "github.com/quanghung97/kafka-go"
 )
 
 // global config
-var k = config.Kafka{
+var configKafka = config.Kafka{
 	KafkaUrl: "localhost:9092",
+	MinBytes: 5,
+	MaxBytes: 10e6, // max 10MB
+	MaxWait:  3 * time.Second,
+}
+
+func testConsumer(msg config.Message, err error) {
+	fmt.Printf("message at topic:%v partition:%v %s = %s\n", msg.Topic, msg.Partition, string(msg.Key), string(msg.Value))
+}
+
+func testLog(msg string, a ...interface{}) {
+	fmt.Printf(msg, a...)
+	fmt.Println()
 }
 
 func main() {
-	defer k.ConsumerReader.Close()
-
-	fmt.Println("start consuming ... !!")
-	for {
-		_, err := k.ReaderReceiveMessage("services10", "group-logger")
-		if err != nil {
-			fmt.Println(err)
-			break
-		}
-		// fmt.Printf("message at topic:%v partition:%v offset:%v	%s = %s\n", m.Topic, m.Partition, m.Offset, string(m.Key), string(m.Value))
-	}
-
-	if err := k.ConsumerReader.Close(); err != nil {
-		fmt.Println("failed to close reader:", err)
-	}
+	configKafka.ReaderReceiveMessage("topic-have-23", "log23", testConsumer, testLog)
 }
 ```
 # TEST

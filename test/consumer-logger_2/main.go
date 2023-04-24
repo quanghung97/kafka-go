@@ -27,5 +27,5 @@ func testLog(msg string, a ...interface{}) {
 }
 
 func main() {
-	configKafka.ReaderReceiveMessage("topic-have-25", "log23", testConsumer, testLog)
+	configKafka.ReaderReceiveMessage("topic-have-23", "log23", testConsumer, testLog)
 }
