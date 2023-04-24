@@ -61,8 +61,9 @@ func (k *Kafka) WriterSendMessage(topic string, key string, value string) error 
 
 		if err != nil {
 			fmt.Println("unexpected error", err)
+		} else {
+			break
 		}
-		break
 	}
 	return err
 }
