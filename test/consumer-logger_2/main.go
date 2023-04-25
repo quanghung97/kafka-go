@@ -8,7 +8,7 @@ import (
 )
 
 // global config
-var configKafka = config.Kafka{
+var configKafka = &config.Kafka{
 	KafkaUrl:          "localhost:9092",
 	MinBytes:          5,
 	MaxBytes:          10e6, // max 10MB

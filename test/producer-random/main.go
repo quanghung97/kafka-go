@@ -9,7 +9,7 @@ import (
 )
 
 // global config
-var configKafka = config.Kafka{
+var configKafka = &config.Kafka{
 	KafkaUrl:          "localhost:9092",
 	NumPartitions:     12,
 	ReplicationFactor: 1,
@@ -25,12 +25,7 @@ func main() {
 	fmt.Println(constants.PACKAGE_KAFKA_WRITER_SEND_MESSAGE + "start producing ... !!")
 	for i := 0; ; i++ {
 		key := fmt.Sprintf("Key-%d", i)
-		// configKafka.WriterSendMessage("topic-have-23", key, fmt.Sprint(uuid.New()), testLog)
-		if i%2 == 0 {
-			configKafka.WriterSendMessage("topic-have-24", key, fmt.Sprint(uuid.New()), testLog)
-		} else {
-			configKafka.WriterSendMessage("topic-have-23", key, fmt.Sprint(uuid.New()), testLog)
-		}
+		configKafka.WriterSendMessage("topic-have-23", key, fmt.Sprint(uuid.New()), testLog)
 		fmt.Printf("\n created msg %d \n", i)
 	}
 
